@@ -18,11 +18,14 @@ class TimerHolder(
     private val binding: TimerHolderBinding,
     private val listener: TimerListener,
 ) : RecyclerView.ViewHolder(binding.root), TimerViewChanger {
+    private var _holderId = -1
+    val holderId get() = _holderId
 
     fun bind(timerData: TimerData) {
         timerData?.countDownController = CountDownController(this)
         binding.textViewTimer.text = timerData.currentMs.displayTime()
-        binding.titleTemp.text = position.toString()
+        binding.titleTemp.text = timerData.id.toString()
+        _holderId = timerData.id
         if (timerData.isStarted) {
             timerData.countDownController.startTimer(timerData)
             changeViewsToStart()

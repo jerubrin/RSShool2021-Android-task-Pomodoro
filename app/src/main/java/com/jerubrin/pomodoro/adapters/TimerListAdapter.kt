@@ -13,10 +13,13 @@ import com.jerubrin.pomodoro.interfaces.TimerListener
 class TimerListAdapter(
     private val listener: TimerListener
 ): ListAdapter<TimerData, TimerHolder>(itemComparator) {
+    var holderId = -1
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TimerHolder {
+        holderId++
         val layoutInflater = LayoutInflater.from(parent.context)
         val binding = TimerHolderBinding.inflate(layoutInflater, parent, false)
+        binding.titleTempHolderId.text = holderId.toString()
         return TimerHolder(binding, listener)
     }
 
