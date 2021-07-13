@@ -1,6 +1,7 @@
 package com.jerubrin.pomodoro.data
 
 import com.jerubrin.pomodoro.adapters.TimerListAdapter
+import com.jerubrin.pomodoro.timer.CountDownController
 
 fun MutableList<TimerData>.changeTimerData(
     id: Int,
@@ -11,7 +12,7 @@ fun MutableList<TimerData>.changeTimerData(
     val newTimers = mutableListOf<TimerData>()
     this.forEach {
         if (it.id == id) {
-            newTimers.add(TimerData(it.id, currentMs ?: it.currentMs, isStarted))
+            newTimers.add(TimerData(it.id, currentMs ?: it.currentMs, isStarted, CountDownController(null)))
         } else {
             newTimers.add(it)
         }

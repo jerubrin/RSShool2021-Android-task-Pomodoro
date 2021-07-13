@@ -17,7 +17,7 @@ class TimerListAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TimerHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
         val binding = TimerHolderBinding.inflate(layoutInflater, parent, false)
-        return TimerHolder(binding, listener, binding.root.context.resources)
+        return TimerHolder(binding, listener)
     }
 
     override fun onBindViewHolder(holder: TimerHolder, position: Int) {

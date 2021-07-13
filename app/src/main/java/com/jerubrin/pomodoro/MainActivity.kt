@@ -9,6 +9,7 @@ import com.jerubrin.pomodoro.data.TimerData
 import com.jerubrin.pomodoro.data.changeTimerData
 import com.jerubrin.pomodoro.databinding.ActivityMainBinding
 import com.jerubrin.pomodoro.interfaces.TimerListener
+import com.jerubrin.pomodoro.timer.CountDownController
 
 
 class MainActivity : AppCompatActivity(), TimerListener {
@@ -33,7 +34,7 @@ class MainActivity : AppCompatActivity(), TimerListener {
             val currentMin = binding.textInputMinutes.text.toString().toLongOrNull() ?: 0L
             if (currentMin != 0L) {
                 val currentMs = currentMin * 60L * 1000L
-                timersDataList.add(TimerData(nextId++, currentMs, false))
+                timersDataList.add(TimerData(nextId++, currentMs, false, CountDownController(null)))
                 timerListAdapter.submitList(timersDataList.toList())
             } else {
                 Toast.makeText(this, "Неверное значение!", Toast.LENGTH_SHORT).show()
@@ -49,10 +50,6 @@ class MainActivity : AppCompatActivity(), TimerListener {
 
     override fun stop(id: Int, currentMs: Long) {
         timersDataList.changeTimerData(id, currentMs, false, timerListAdapter)
-    }
-
-    override fun reset(id: Int) {
-        timersDataList.changeTimerData(id, 0L, false, timerListAdapter)
     }
 
     override fun delete(id: Int) {
