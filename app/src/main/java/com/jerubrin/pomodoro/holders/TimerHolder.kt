@@ -1,68 +1,54 @@
 package com.jerubrin.pomodoro.holders
 
-import android.content.res.Resources
 import android.graphics.drawable.AnimationDrawable
-import android.os.CountDownTimer
-import androidx.core.os.persistableBundleOf
 import androidx.core.view.isInvisible
 import androidx.recyclerview.widget.RecyclerView
+import com.jerubrin.pomodoro.adapters.TimerListAdapter
 import com.jerubrin.pomodoro.data.TimerData
 import com.jerubrin.pomodoro.databinding.TimerHolderBinding
 import com.jerubrin.pomodoro.extentions.displayTime
 import com.jerubrin.pomodoro.interfaces.TimerListener
-import com.jerubrin.pomodoro.interfaces.TimerViewChanger
-import com.jerubrin.pomodoro.timer.CountDownController
-import com.jerubrin.pomodoro.values.*
+import com.jerubrin.pomodoro.data.*
 
 class TimerHolder(
     private val binding: TimerHolderBinding,
-    private val listener: TimerListener,
-) : RecyclerView.ViewHolder(binding.root), TimerViewChanger {
-    private var _holderId = -1
-    val holderId get() = _holderId
+    private val listener: TimerListener
+) : RecyclerView.ViewHolder(binding.root) {
 
-    fun bind(timerData: TimerData) {
-        timerData?.countDownController = CountDownController(this)
-        binding.textViewTimer.text = timerData.currentMs.displayTime()
-        binding.titleTemp.text = timerData.id.toString()
-        _holderId = timerData.id
-        if (timerData.isStarted) {
-            timerData.countDownController.startTimer(timerData)
-            changeViewsToStart()
-        } else {
-            timerData.countDownController.stopTimer(timerData)
-            changeViewsToStop()
-        }
-        initButtonsListeners(timerData)
+    fun bind(timerData: TimerData, adapter: TimerListAdapter) {
+        fillHolderViews(binding, timerData)
+
+        initButtonsListeners(timerData, adapter)
     }
 
-    private fun initButtonsListeners(timerData: TimerData) {
+    private fun initButtonsListeners(timerData: TimerData, adapter: TimerListAdapter) {
         binding.startStopButton.setOnClickListener {
             if (timerData.isStarted) {
-                listener.stop(timerData.id, timerData.currentMs)
+                stopTimer(timerData)
+                adapter.notifyDataSetChanged()
             } else {
-                listener.start(timerData.id)
+                startTimer(timerData, adapter)
             }
         }
 
-        binding.deleteButton.setOnClickListener { listener.delete(timerData.id) }
+        binding.deleteButton.setOnClickListener {
+            stopTimer(timerData)
+            listener.delete(timerData.id)
+        }
     }
 
-    private fun changeViewsToStart(){
-        binding.startStopButton.text = "Stop"
-        binding.blinkingIndicator.isInvisible = false
-        (binding.blinkingIndicator.background as? AnimationDrawable)?.start()
-    }
-
-    private fun changeViewsToStop(){
-        binding.startStopButton.text = "Start"
-        binding.blinkingIndicator.isInvisible = true
-        (binding.blinkingIndicator.background as? AnimationDrawable)?.stop()
-    }
-
-    override fun changeTimerView(timerText: String) {
-        //if(position == timerData.id) {
-            binding.textViewTimer.text = timerText
-        //}
+    private fun fillHolderViews(binding: TimerHolderBinding, timerData: TimerData){
+        binding.apply {
+            timerData.apply {
+                textViewTimer.text = currentMs.displayTime()
+                startStopButton.text = buttonText
+                blinkingIndicator.isInvisible = invisibleAnimationDrawable
+                if (invisibleAnimationDrawable){
+                    (blinkingIndicator.background as? AnimationDrawable)?.stop()
+                } else {
+                    (blinkingIndicator.background as? AnimationDrawable)?.start()
+                }
+            }
+        }
     }
 }

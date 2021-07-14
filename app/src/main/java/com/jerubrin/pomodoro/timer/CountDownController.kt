@@ -1,37 +1,38 @@
 package com.jerubrin.pomodoro.timer
 
 import android.os.CountDownTimer
+import com.jerubrin.pomodoro.adapters.TimerListAdapter
 import com.jerubrin.pomodoro.data.TimerData
-import com.jerubrin.pomodoro.extentions.displayTime
-import com.jerubrin.pomodoro.interfaces.TimerViewChanger
+import com.jerubrin.pomodoro.data.*
 import com.jerubrin.pomodoro.values.*
 
-class CountDownController(
-    private val holder: TimerViewChanger?
-) {
+object CountDownController {
     private var timer: CountDownTimer? = null
 
-    fun startTimer(timerData: TimerData) {
+    private var timerData: TimerData? = null
+    fun getTimer() = timerData
+
+    fun startTimer(timerData: TimerData, adapter: TimerListAdapter?) {
         timer?.cancel()
-        timer = getCountDownTimer(timerData)
+        this.timerData = timerData
+        timer = getCountDownTimer(adapter)
         timer?.start()
     }
 
-    fun stopTimer(timerData: TimerData) {
-        timer?.cancel()
-    }
-
-    private fun getCountDownTimer(timerData: TimerData): CountDownTimer {
+    private fun getCountDownTimer(adapter: TimerListAdapter?): CountDownTimer {
         return object : CountDownTimer(PERIOD_DAY, ONE_SECOND) {
             val interval = ONE_SECOND
 
             override fun onTick(millisUntilFinished: Long) {
-                timerData.currentMs -= interval
-                holder?.changeTimerView(timerData.currentMs.displayTime())
+                if (timerData?.isStarted == true) {
+                    timerData?.currentMs = timerData?.currentMs?.minus(interval) ?: 0
+                    if (timerData?.currentMs!! <= 0) countDownEnd(timerData)
+                    adapter?.notifyDataSetChanged()
+                }
             }
 
             override fun onFinish() {
-                //binding?.textViewTimer?.text = timerData.currentMs.displayTime()
+                adapter?.notifyDataSetChanged()
             }
         }
     }

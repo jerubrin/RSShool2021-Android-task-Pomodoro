@@ -1,6 +1,5 @@
 package com.jerubrin.pomodoro.adapters
 
-import android.animation.TimeAnimator
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -13,18 +12,14 @@ import com.jerubrin.pomodoro.interfaces.TimerListener
 class TimerListAdapter(
     private val listener: TimerListener
 ): ListAdapter<TimerData, TimerHolder>(itemComparator) {
-    var holderId = -1
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TimerHolder {
-        holderId++
         val layoutInflater = LayoutInflater.from(parent.context)
         val binding = TimerHolderBinding.inflate(layoutInflater, parent, false)
-        binding.titleTempHolderId.text = holderId.toString()
         return TimerHolder(binding, listener)
     }
 
     override fun onBindViewHolder(holder: TimerHolder, position: Int) {
-        holder.bind(getItem(position))
+        holder.bind(getItem(position), this)
     }
 
 
