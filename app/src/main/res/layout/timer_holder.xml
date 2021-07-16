@@ -7,8 +7,22 @@
     android:layout_marginBottom="8dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/holder_constraint"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
+        <com.jerubrin.pomodoro.views.CustomView
+            android:id="@+id/progress_custom"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:custom_style="fill"
+            app:from_color="@color/green_light"
+            app:to_color="@color/red_light"
+            />
 
         <ImageView
             android:id="@+id/blinking_indicator"

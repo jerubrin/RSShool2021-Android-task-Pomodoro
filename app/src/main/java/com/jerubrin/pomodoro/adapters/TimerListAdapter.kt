@@ -4,18 +4,20 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
+import com.jerubrin.pomodoro.MainActivity
 import com.jerubrin.pomodoro.data.TimerData
 import com.jerubrin.pomodoro.databinding.TimerHolderBinding
 import com.jerubrin.pomodoro.holders.TimerHolder
 import com.jerubrin.pomodoro.interfaces.TimerListener
 
 class TimerListAdapter(
-    private val listener: TimerListener
+    private val listener: TimerListener,
+    private val activity: MainActivity
 ): ListAdapter<TimerData, TimerHolder>(itemComparator) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TimerHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
         val binding = TimerHolderBinding.inflate(layoutInflater, parent, false)
-        return TimerHolder(binding, listener)
+        return TimerHolder(binding, listener, activity)
     }
 
     override fun onBindViewHolder(holder: TimerHolder, position: Int) {

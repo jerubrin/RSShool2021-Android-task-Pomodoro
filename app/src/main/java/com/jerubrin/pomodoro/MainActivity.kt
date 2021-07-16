@@ -14,7 +14,7 @@ import com.jerubrin.pomodoro.timer.CountDownController
 class MainActivity : AppCompatActivity(), TimerListener {
     private lateinit var binding: ActivityMainBinding
 
-    private val timerListAdapter = TimerListAdapter(this)
+    private val timerListAdapter = TimerListAdapter(this, this)
     private val timersDataList = mutableListOf<TimerData>()
     private var nextId = 0
 

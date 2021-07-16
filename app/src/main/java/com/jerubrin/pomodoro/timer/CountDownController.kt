@@ -12,6 +12,8 @@ object CountDownController {
     private var timerData: TimerData? = null
     fun getTimer() = timerData
 
+    private var position = -1
+
     fun startTimer(timerData: TimerData, adapter: TimerListAdapter?) {
         timer?.cancel()
         this.timerData = timerData
@@ -27,13 +29,25 @@ object CountDownController {
                 if (timerData?.isStarted == true) {
                     timerData?.currentMs = timerData?.currentMs?.minus(interval) ?: 0
                     if (timerData?.currentMs!! <= 0) countDownEnd(timerData)
-                    adapter?.notifyDataSetChanged()
+                    if (position > -1){
+                        adapter?.notifyItemChanged(position)
+                    } else {
+                        adapter?.notifyDataSetChanged()
+                    }
                 }
             }
 
             override fun onFinish() {
-                adapter?.notifyDataSetChanged()
+                if (position > -1){
+                    adapter?.notifyItemChanged(position)
+                } else {
+                    adapter?.notifyDataSetChanged()
+                }
             }
         }
+    }
+
+    fun setPosition(position: Int){
+        this.position = position
     }
 }
