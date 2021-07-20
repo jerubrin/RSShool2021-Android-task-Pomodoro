@@ -1,7 +1,9 @@
 package com.jerubrin.pomodoro.adapters
 
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.jerubrin.pomodoro.MainActivity
@@ -20,14 +22,14 @@ class TimerListAdapter(
         return TimerHolder(binding, listener, activity)
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onBindViewHolder(holder: TimerHolder, position: Int) {
-        holder.bind(getItem(position), this)
+        holder.bind(getItem(position), this, position)
     }
 
+    companion object {
 
-    private companion object {
-
-        private val itemComparator = object : DiffUtil.ItemCallback<TimerData>() {
+        val itemComparator = object : DiffUtil.ItemCallback<TimerData>() {
 
             override fun areItemsTheSame(oldItem: TimerData, newItem: TimerData): Boolean {
                 return oldItem.id == newItem.id

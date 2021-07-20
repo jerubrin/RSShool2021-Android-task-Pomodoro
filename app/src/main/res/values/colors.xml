@@ -10,6 +10,6 @@
     <color name="red_100">#DF2A2A</color>
     <color name="red_light">#DD5353</color>
     <color name="green_light">#5FC861</color>
-    <color name="blue_light">#5A9BCF</color>
+    <color name="red_dark">#A32626</color>
     <color name="transparent">#00000000</color>
 </resources>

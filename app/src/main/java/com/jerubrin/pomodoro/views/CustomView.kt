@@ -117,8 +117,8 @@ class CustomView @JvmOverloads constructor(
     /**
      * Set time period
      */
-    fun setPeriod(period: Long) {
-        periodMs = period
+    fun setPeriod(period: Long?) {
+        periodMs = period ?: 0
     }
 
     private companion object {
