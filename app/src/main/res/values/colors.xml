@@ -12,4 +12,12 @@
     <color name="green_light">#5FC861</color>
     <color name="red_dark">#A32626</color>
     <color name="transparent">#00000000</color>
+
+    <color name="red_200">#FFD9D9</color>
+    <color name="red_300">#DAB0B0</color>
+    <color name="red_400">#CD8888</color>
+
+    <color name="red_500">#E63232</color>
+    <color name="red_600">#9A1414</color>
+    <color name="red_700">#9A1414</color>
 </resources>

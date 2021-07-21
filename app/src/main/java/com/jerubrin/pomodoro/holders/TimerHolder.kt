@@ -1,5 +1,7 @@
 package com.jerubrin.pomodoro.holders
 
+import android.graphics.Color
+import android.graphics.ColorFilter
 import android.graphics.drawable.AnimationDrawable
 import android.graphics.drawable.Drawable
 import android.os.Build

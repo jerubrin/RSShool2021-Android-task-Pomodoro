@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="64dp"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:background="@color/red_200"
+    style="@style/TextAppearance.Compat.Notification">
+
+
+    <TextView
+        android:layout_marginTop="4dp"
+        android:id="@+id/title_notify_small"
+        style="@style/TextAppearance.Compat.Notification.Time"
+        android:textColor="@color/red_700"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/app_name"
+        android:textStyle="bold"
+        android:textAllCaps="true"
+        android:textSize="12dp"
+        />
+    <TextView
+        android:layout_marginBottom="4dp"
+        android:id="@+id/timer_text_notify_small"
+        style="@style/TextAppearance.Compat.Notification.Time"
+        android:textStyle="bold"
+        android:textColor="@color/red_100"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="00:00:00"
+        android:textSize="20dp"
+        />
+    <ProgressBar
+        android:id="@+id/progressbar_notify_small"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:progressDrawable="@drawable/redprogress"
+        android:layout_width="match_parent"
+        android:layout_height="12dp"
+        android:progress="10"
+        />
+
+
+</LinearLayout>

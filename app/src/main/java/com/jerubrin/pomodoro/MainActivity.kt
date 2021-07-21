@@ -62,7 +62,7 @@ class MainActivity : AppCompatActivity(), TimerListener, LifecycleObserver {
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     fun onAppBackgrounded() {
-        if (CountDownController.isWorking()) {
+        if (CountDownController.isWorking) {
             val startIntent = Intent(this, ForegroundService::class.java)
             startIntent.putExtra(COMMAND_ID, COMMAND_START)
             startService(startIntent)

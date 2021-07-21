@@ -1,5 +1,6 @@
 package com.jerubrin.pomodoro.services
 
+import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -8,23 +9,28 @@ import android.content.Intent
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
+import android.view.View
+import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import com.jerubrin.pomodoro.MainActivity
 import com.jerubrin.pomodoro.R
 import com.jerubrin.pomodoro.extentions.displayTime
 import com.jerubrin.pomodoro.timer.CountDownController
-import kotlinx.coroutines.*
 import com.jerubrin.pomodoro.values.*
+import kotlinx.coroutines.*
 
+@SuppressLint("RemoteViewLayout")
 class ForegroundService : Service() {
 
     private var isServiceStarted = false
     private var notificationManager: NotificationManager? = null
     private var job: Job? = null
 
+    var remoteViews: RemoteViews? = null
+    var remoteSmallViews: RemoteViews? = null
+
     private val builder by lazy {
         NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle(this.resources.getString(R.string.app_name))
             .setGroup("Timer")
             .setGroupSummary(false)
             .setDefaults(NotificationCompat.DEFAULT_ALL)
@@ -77,26 +83,52 @@ class ForegroundService : Service() {
         job = GlobalScope.launch(Dispatchers.Main) {
             while (true) {
                 val timerMs = CountDownController.getTimeMs() + 999L
-                if (CountDownController.isWorking()) {
-                    notificationManager?.notify(
-                        NOTIFICATION_ID,
-                        getNotification(
-                            timerMs.displayTime()
-                        )
-                    )
-                } else if(CountDownController.isFinished()) {
-                    notificationManager?.notify(
-                        NOTIFICATION_ID,
-                        getNotification(
-                            "Finished!"
-                        )
-                    )
-                    delay(WAIT_BEFORE_STOP)
-                    commandStop()
+                val allMs = CountDownController.getAllMs()
+                val progressNumber = ( (timerMs * 10_000) / allMs ).toInt()
+
+                when {
+                    CountDownController.isWorking -> {
+                        notifyRemoteViews(timerMs.displayTime(), progressNumber, true)
+                    }
+                    CountDownController.isFinished -> {
+                        notifyRemoteViews("FINISHED!", 0, false)
+                        delay(WAIT_AFTER_FINISH)
+                        commandStop()
+                    }
+                    else -> {
+                        notifyRemoteViews("STOPPED!", progressNumber, false)
+                        delay(WAIT_AFTER_STOP)
+                        commandStop()
+                    }
                 }
                 delay(INTERVAL)
             }
         }
+    }
+
+    private fun notifyRemoteViews(displayTime: String, progressNumber: Int, buttonVisible: Boolean) {
+        remoteViews = RemoteViews(packageName, R.layout.timer_notify)
+        remoteViews?.setTextViewText(R.id.timer_text_notify, displayTime)
+        remoteViews?.setProgressBar(R.id.progressbar_notify, MAX_PROGRESS, MAX_PROGRESS-progressNumber, false)
+
+        remoteSmallViews = RemoteViews(packageName, R.layout.timer_small_notify)
+        remoteSmallViews?.setTextViewText(R.id.timer_text_notify_small, displayTime)
+        remoteSmallViews?.setProgressBar(R.id.progressbar_notify_small, 10_000, 10_000-progressNumber, false)
+
+        if(buttonVisible) {
+            remoteViews?.setOnClickPendingIntent(R.id.button_stop_notify, getButtonPendingIntent())
+        } else {
+            remoteViews?.setViewVisibility(R.id.button_stop_notify, View.INVISIBLE)
+            remoteViews?.setOnClickPendingIntent(R.id.button_stop_notify, getPendingIntent())
+        }
+
+        notificationManager?.notify(
+            NOTIFICATION_ID,
+            builder
+                .setCustomContentView(remoteSmallViews)
+                .setCustomBigContentView(remoteViews)
+                .build()
+        )
     }
 
     private fun commandStop() {
@@ -125,12 +157,8 @@ class ForegroundService : Service() {
 
     private fun startForegroundAndShowNotification() {
         createChannel()
-        val notification = getNotification("content")
-        startForeground(NOTIFICATION_ID, notification)
+        startForeground(NOTIFICATION_ID, builder.build())
     }
-
-    private fun getNotification(content: String) = builder.setContentText(content).build()
-
 
     private fun createChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -147,5 +175,10 @@ class ForegroundService : Service() {
         val resultIntent = Intent(this, MainActivity::class.java)
         resultIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
         return PendingIntent.getActivity(this, 0, resultIntent, PendingIntent.FLAG_ONE_SHOT)
+    }
+
+    private fun getButtonPendingIntent(): PendingIntent? {
+        val actionIntent = Intent(this, ButtonStopBroadcastReceiver::class.java)
+        return PendingIntent.getBroadcast(this, 1, actionIntent, PendingIntent.FLAG_UPDATE_CURRENT)
     }
 }

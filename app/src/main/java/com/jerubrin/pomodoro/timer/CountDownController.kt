@@ -10,15 +10,26 @@ object CountDownController {
     private var timer: CountDownTimer? = null
 
     private var currentTimerData: TimerData? = null
+    private var currentAdapter: TimerListAdapter? = null
 
     private var currentTime = 0L
 
-    fun isWorking() = currentTimerData?.isStarted ?: false
-    fun isFinished() = currentTimerData?.isFinished ?: false
+    var isWorking = false
+    var isFinished = false
     fun getTimeMs() = currentTimerData?.currentMs ?: -1999L
+    fun getAllMs() = currentTimerData?.allMs ?: 0
+
+    fun stopTimerNow() {
+        if (currentTimerData != null && currentAdapter != null) {
+            val nonNullCurrentTimerData = currentTimerData !!
+            val nonNullCurrentAdapter = currentAdapter !!
+            stopTimer(nonNullCurrentTimerData.id, nonNullCurrentAdapter)
+        }
+    }
 
     fun startTimer(id: Int, adapter: TimerListAdapter?) {
         timer?.cancel()
+        currentAdapter = adapter
         currentTimerData = adapter?.currentList?.find { it.id == id }
         adapter?.currentList?.changeTimerData(
             id,
@@ -29,17 +40,21 @@ object CountDownController {
             false,
             currentTimerData?.allCurrentMs ?: -1
         )
+        isWorking = true
         timer = getCountDownTimer(adapter)
         currentTime = System.currentTimeMillis()
         timer?.start()
     }
 
     fun stopTimer(id: Int, adapter: TimerListAdapter?) {
+        timer?.cancel()
+        currentTimerData = adapter?.currentList?.find { it.id == id }
         if (currentTimerData != null) {
             currentTimerData?.apply {
-                adapter?.currentList?.changeTimerData(id, currentMs, false, allMs, adapter)
+                adapter?.currentList?.changeTimerData(id, currentMs, false, allMs, adapter, allCurrentMs = currentMs)
             }
         }
+        isWorking = false
     }
 
     private fun getCountDownTimer(adapter: TimerListAdapter?): CountDownTimer {
@@ -65,7 +80,7 @@ object CountDownController {
     }
 
     private fun countDown(currentTimerData: TimerData, adapter: TimerListAdapter?){
-        val isFinished = currentTimerData.currentMs <= 0
+        isFinished = currentTimerData.currentMs <= 0
         if (!isFinished) {
             adapter?.currentList?.changeTimerData(
                 currentTimerData.id,
@@ -76,6 +91,7 @@ object CountDownController {
                 false,
                 currentTimerData.allCurrentMs
             )
+            isWorking = true
         } else {
             adapter?.currentList?.changeTimerData(
                 currentTimerData.id,
@@ -86,6 +102,7 @@ object CountDownController {
                 true,
                 -1L
             )
+            isWorking = false
         }
     }
 }
