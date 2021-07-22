@@ -106,9 +106,10 @@ class MainActivity : AppCompatActivity(), TimerListener, LifecycleObserver {
         }
     }
 
+    private lateinit var stopIntent: Intent
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     fun onAppForegrounded() {
-        val stopIntent = Intent(this, ForegroundService::class.java)
+        stopIntent = Intent(this, ForegroundService::class.java)
         stopIntent.putExtra(COMMAND_ID, COMMAND_STOP)
         startService(stopIntent)
     }
@@ -150,7 +151,7 @@ class MainActivity : AppCompatActivity(), TimerListener, LifecycleObserver {
     }
 
     companion object {
-        private var timersDataList = mutableListOf<TimerData>()
+        var timersDataList = mutableListOf<TimerData>()
         private var nextId = 0
     }
 }

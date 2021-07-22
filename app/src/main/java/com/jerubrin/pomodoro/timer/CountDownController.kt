@@ -1,6 +1,8 @@
 package com.jerubrin.pomodoro.timer
 
 import android.os.CountDownTimer
+import android.os.SystemClock
+import com.jerubrin.pomodoro.MainActivity
 import com.jerubrin.pomodoro.adapters.TimerListAdapter
 import com.jerubrin.pomodoro.data.TimerData
 import com.jerubrin.pomodoro.extentions.changeTimerData
@@ -25,6 +27,7 @@ object CountDownController {
             val nonNullCurrentTimerData = currentTimerData !!
             val nonNullCurrentAdapter = currentAdapter !!
             stopTimer(nonNullCurrentTimerData.id, nonNullCurrentAdapter)
+            MainActivity.timersDataList.find { it.id == nonNullCurrentTimerData.id }?.isStarted = false
         }
     }
 
@@ -43,7 +46,7 @@ object CountDownController {
         )
         isWorking = true
         timer = getCountDownTimer(adapter)
-        currentTime = System.currentTimeMillis()
+        currentTime = SystemClock.elapsedRealtime()
         timer?.start()
     }
 
@@ -67,7 +70,7 @@ object CountDownController {
                 currentTimerData = adapter?.currentList?.find { it.id == currentTimerData?.id }?.copy()
                 if (currentTimerData?.isStarted == true) {
                     currentTimerData?.currentMs =
-                        currentTimerData?.allCurrentMs?.minus(System.currentTimeMillis() - currentTime) ?: 0
+                        currentTimerData?.allCurrentMs?.minus(SystemClock.elapsedRealtime() - currentTime) ?: 0
                     if (currentTimerData != null)
                         countDown(currentTimerData!!, adapter)
                 }
