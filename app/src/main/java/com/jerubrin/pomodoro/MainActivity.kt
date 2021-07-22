@@ -1,5 +1,6 @@
 package com.jerubrin.pomodoro
 
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -7,6 +8,7 @@ import android.widget.Toast
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.*
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.jerubrin.pomodoro.adapters.TimerListAdapter
 import com.jerubrin.pomodoro.data.TimerData
 import com.jerubrin.pomodoro.databinding.ActivityMainBinding
@@ -28,29 +30,65 @@ class MainActivity : AppCompatActivity(), TimerListener, LifecycleObserver {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        if (binding.recyclerView.adapter == null){
-            binding.recyclerView.apply {
+        setTimePickers(0..23, 0..59, 0..59)
+        startRecycleView(binding.recyclerView, timerListAdapter)
+
+        restoreData(timersDataList, binding.recyclerView)
+
+        setButtonAddListener(binding)
+    }
+
+    private fun setTimePickers(hours: IntRange = 0..23, min: IntRange = 0..59, sec: IntRange = 0..59){
+        binding.pickerInputHours.apply {
+            minValue = hours.first
+            maxValue = hours.last
+        }
+        binding.pickerInputMinutes.apply {
+            minValue = min.first
+            maxValue = min.last
+        }
+        binding.pickerInputSeconds.apply {
+            minValue = sec.first
+            maxValue = sec.last
+        }
+    }
+
+    private fun setButtonAddListener(binding: ActivityMainBinding) {
+        binding.addButton.setOnClickListener {
+            val currentSec =
+                ( binding.pickerInputHours.value.toString().toLongOrNull() ?: 0L  ) * 60 * 60 +
+                ( binding.pickerInputMinutes.value.toString().toLongOrNull() ?: 0L ) * 60 +
+                ( binding.pickerInputSeconds.value.toString().toLongOrNull() ?: 0L )
+            if (currentSec != 0L) {
+                if (timerListAdapter.currentList.size <= 100) {
+                    timersDataList = addToList(currentSec, nextId++, timerListAdapter)
+                    timerListAdapter.submitList(timersDataList)
+                } else {
+                    Toast.makeText(this, "Слишком много таймеров!", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                Toast.makeText(this, "Неверное значение!", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun startRecycleView(recyclerView :RecyclerView, timerListAdapter: TimerListAdapter) {
+        if (recyclerView.adapter == null){
+            recyclerView.apply {
                 layoutManager = LinearLayoutManager(context)
                 adapter = timerListAdapter
             }
         }
+    }
 
+    private fun restoreData(timersDataList: MutableList<TimerData>, recyclerView: RecyclerView) {
         if (timersDataList.isNotEmpty()){
-            (binding.recyclerView.adapter as TimerListAdapter).submitList(timersDataList)
+            val timerListAdapter = (recyclerView.adapter as TimerListAdapter)
+            timerListAdapter.submitList(timersDataList)
             val runningTimer = timerListAdapter.currentList.find { it.isStarted }
             if (runningTimer != null){
                 runningTimer.allCurrentMs = runningTimer.currentMs
                 CountDownController.startTimer(runningTimer.id, timerListAdapter)
-            }
-        }
-
-        binding.addButton.setOnClickListener {
-            val currentMin = binding.textInputMinutes.text.toString().toLongOrNull() ?: 0L
-            if (currentMin != 0L) {
-                timersDataList = addToList(currentMin, nextId++, timerListAdapter)
-                timerListAdapter.submitList(timersDataList)
-            } else {
-                Toast.makeText(this, "Неверное значение!", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -84,8 +122,8 @@ class MainActivity : AppCompatActivity(), TimerListener, LifecycleObserver {
         timerListAdapter.submitList(timersDataList)
     }
 
-    override fun addToList(currentMin: Long, id: Int, adapter: TimerListAdapter): MutableList<TimerData> {
-        val currentMs = currentMin * 60L * 1000L
+    override fun addToList(currentSec: Long, id: Int, adapter: TimerListAdapter): MutableList<TimerData> {
+        val currentMs = currentSec * 1000L
         val timersDataList = mutableListOf<TimerData>()
         adapter.currentList.forEach { timersDataList.add(it) }
         timersDataList.add(TimerData(id, currentMs, false, currentMs))

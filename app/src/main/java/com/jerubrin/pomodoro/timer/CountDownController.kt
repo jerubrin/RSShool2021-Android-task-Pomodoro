@@ -47,14 +47,15 @@ object CountDownController {
     }
 
     fun stopTimer(id: Int, adapter: TimerListAdapter?) {
-        timer?.cancel()
-        currentTimerData = adapter?.currentList?.find { it.id == id }
-        if (currentTimerData != null) {
+        val cTimerData = adapter?.currentList?.find { it.id == id }
+        if (cTimerData != null && currentTimerData?.id == id) {
+            timer?.cancel()
+            currentTimerData = cTimerData
             currentTimerData?.apply {
                 adapter?.currentList?.changeTimerData(id, currentMs, false, allMs, adapter, allCurrentMs = currentMs)
             }
+            isWorking = false
         }
-        isWorking = false
     }
 
     private fun getCountDownTimer(adapter: TimerListAdapter?): CountDownTimer {

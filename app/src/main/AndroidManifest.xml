@@ -25,7 +25,9 @@
         <service
             android:name=".services.ForegroundService"
             android:permission="android.permission.FOREGROUND_SERVICE" />
-        <receiver android:name=".services.ButtonStopBroadcastReceiver" />
+        <receiver android:name=".services.ButtonStopBroadcastReceiver"
+            android:enabled="true"
+            android:exported="true" />
     </application>
 
 </manifest>

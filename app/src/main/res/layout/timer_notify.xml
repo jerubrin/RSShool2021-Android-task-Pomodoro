@@ -43,7 +43,6 @@
         android:progress="10"
         />
     <Button
-        android:enabled="true"
         android:id="@+id/button_stop_notify"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
