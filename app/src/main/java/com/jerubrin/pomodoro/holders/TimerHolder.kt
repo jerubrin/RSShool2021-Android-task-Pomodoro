@@ -81,8 +81,8 @@ class TimerHolder(
     }
 
     private fun getTimerString(timerData: TimerData): String =
-            if ((timerData.currentMs + 999L) <= timerData.allMs)
-                (timerData.currentMs + 999L).displayTime()
+            if ((timerData.currentMs + 899L) <= timerData.allMs)
+                (timerData.currentMs + 899L).displayTime()
             else
                 timerData.allMs.displayTime()
 }

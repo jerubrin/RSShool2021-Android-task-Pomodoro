@@ -122,14 +122,12 @@ class MainActivity : AppCompatActivity(), TimerListener, LifecycleObserver {
     }
 
     override fun reset(id: Int) {
-        timersDataList = mutableListOf()
-        var wasFinished = false
+        val timersDataList = mutableListOf<TimerData>()
         timerListAdapter.currentList.forEach {
             if(it.id != id) {
                 timersDataList.add(it)
             } else {
                 val itCopy = it.copy()
-                wasFinished = it.isFinished
                 itCopy.apply {
                     isStarted = false
                     allCurrentMs = -1L
@@ -140,22 +138,7 @@ class MainActivity : AppCompatActivity(), TimerListener, LifecycleObserver {
                 timersDataList.add(itCopy)
             }
         }
-        if (wasFinished) {
-            timerListAdapter.currentList.forEach {
-                if (it.id == id) {
-                    it.apply {
-                        isStarted = false
-                        allCurrentMs = -1L
-                        currentMs = allMs
-                        buttonText = "Start"
-                        isFinished = false
-                    }
-                }
-            }
-            timerListAdapter.notifyDataSetChanged()
-        } else {
-            timerListAdapter.submitList(timersDataList)
-        }
+        timerListAdapter.submitList(timersDataList)
     }
 
     override fun addToList(currentSec: Long, id: Int, adapter: TimerListAdapter): MutableList<TimerData> {

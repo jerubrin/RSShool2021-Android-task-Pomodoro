@@ -95,6 +95,7 @@ object CountDownController {
             )
             isWorking = true
         } else {
+            stopTimer(currentTimerData.id, adapter)
             adapter?.currentList?.changeTimerData(
                 currentTimerData.id,
                 currentTimerData.allMs,
@@ -104,8 +105,8 @@ object CountDownController {
                 true,
                 -1L
             )
-            playFinishAudio(adapter?.activity !!)
             isWorking = false
+            playFinishAudio(adapter?.activity !!)
         }
     }
 }
