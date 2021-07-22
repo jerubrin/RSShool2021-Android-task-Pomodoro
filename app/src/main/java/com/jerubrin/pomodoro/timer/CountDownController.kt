@@ -4,6 +4,7 @@ import android.os.CountDownTimer
 import com.jerubrin.pomodoro.adapters.TimerListAdapter
 import com.jerubrin.pomodoro.data.TimerData
 import com.jerubrin.pomodoro.extentions.changeTimerData
+import com.jerubrin.pomodoro.player.playFinishAudio
 import com.jerubrin.pomodoro.values.*
 
 object CountDownController {
@@ -103,6 +104,7 @@ object CountDownController {
                 true,
                 -1L
             )
+            playFinishAudio(adapter?.activity !!)
             isWorking = false
         }
     }

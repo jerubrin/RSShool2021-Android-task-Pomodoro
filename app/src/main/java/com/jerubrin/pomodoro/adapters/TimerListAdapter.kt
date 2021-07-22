@@ -14,7 +14,7 @@ import com.jerubrin.pomodoro.interfaces.TimerListener
 
 class TimerListAdapter(
     private val listener: TimerListener,
-    private val activity: MainActivity
+    val activity: MainActivity
 ): ListAdapter<TimerData, TimerHolder>(itemComparator) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TimerHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
