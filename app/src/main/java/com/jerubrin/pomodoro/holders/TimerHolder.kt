@@ -1,11 +1,8 @@
 package com.jerubrin.pomodoro.holders
 
-import android.graphics.Color
-import android.graphics.ColorFilter
 import android.graphics.drawable.AnimationDrawable
 import android.graphics.drawable.Drawable
 import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.core.graphics.drawable.toDrawable
 import androidx.core.view.isInvisible
 import androidx.recyclerview.widget.RecyclerView
@@ -39,6 +36,10 @@ class TimerHolder(
             } else {
                 CountDownController.startTimer(id, adapter)
             }
+        }
+        binding.resetButton.setOnClickListener {
+            CountDownController.stopTimer(id, adapter)
+            listener.reset(id)
         }
         binding.deleteButton.setOnClickListener {
             CountDownController.stopTimer(id, adapter)
