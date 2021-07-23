@@ -101,6 +101,12 @@ class ForegroundService : Service() {
                         commandStop()
                     }
                 }
+                MainActivity.timersDataList.forEachIndexed { index, timerData ->
+                    if(timerData.id == CountDownController.getId()) {
+                        MainActivity.timersDataList[index] =
+                            CountDownController.getTimerData() ?: MainActivity.timersDataList[index]
+                    }
+                }
                 delay(INTERVAL)
             }
         }

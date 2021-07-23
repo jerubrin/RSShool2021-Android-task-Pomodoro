@@ -21,6 +21,8 @@ object CountDownController {
     var isFinished = false
     fun getTimeMs() = currentTimerData?.currentMs ?: -1999L
     fun getAllMs() = currentTimerData?.allMs ?: 0
+    fun getId() = currentTimerData?.id ?: -1
+    fun getTimerData() = currentTimerData
 
     fun stopTimerNow() {
         if (currentTimerData != null && currentAdapter != null) {
