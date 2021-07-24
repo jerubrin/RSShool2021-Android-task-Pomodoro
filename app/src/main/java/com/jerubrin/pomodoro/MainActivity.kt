@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.jerubrin.pomodoro.adapters.TimerListAdapter
 import com.jerubrin.pomodoro.data.TimerData
 import com.jerubrin.pomodoro.databinding.ActivityMainBinding
+import com.jerubrin.pomodoro.extentions.displaySlot
 import com.jerubrin.pomodoro.interfaces.TimerListener
 import com.jerubrin.pomodoro.services.ForegroundService
 import com.jerubrin.pomodoro.timer.CountDownController
@@ -38,17 +39,25 @@ class MainActivity : AppCompatActivity(), TimerListener, LifecycleObserver {
     }
 
     private fun setTimePickers(hours: IntRange = 0..23, min: IntRange = 0..59, sec: IntRange = 0..59){
+        var values = arrayOf<String>()
+        for (i in 0..59) values += arrayOf(i.toLong().displaySlot())
         binding.pickerInputHours.apply {
             minValue = hours.first
             maxValue = hours.last
+            wrapSelectorWheel = false
         }
         binding.pickerInputMinutes.apply {
             minValue = min.first
             maxValue = min.last
+            displayedValues = values
+            wrapSelectorWheel = false
+            value = 1
         }
         binding.pickerInputSeconds.apply {
             minValue = sec.first
             maxValue = sec.last
+            displayedValues = values
+            wrapSelectorWheel = false
         }
     }
 

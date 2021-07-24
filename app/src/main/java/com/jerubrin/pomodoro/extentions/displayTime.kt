@@ -10,14 +10,14 @@ fun Long.displayTime(): String {
     val min = this.getMinutes()
     val sec = this.getSeconds()
 
-    return "${displaySlot(hours)}:${displaySlot(min)}:${displaySlot(sec)}"
+    return "${hours.displaySlot()}:${min.displaySlot()}:${sec.displaySlot()}"
 }
 
-private fun displaySlot(count: Long): String {
-    return if (count / 10L > 0) {
-        "$count"
+fun Long.displaySlot(): String {
+    return if (this / 10L > 0) {
+        "$this"
     } else {
-        "0$count"
+        "0$this"
     }
 }
 
